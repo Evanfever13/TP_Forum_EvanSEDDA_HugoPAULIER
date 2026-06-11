@@ -11,41 +11,41 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type RolesControllers struct {
-	service *services.RolesService
+type PostsControllers struct {
+	service *services.PostsService
 }
 
-func InitRolesController(service *services.RolesService) *RolesControllers {
-	return &RolesControllers{service: service}
+func InitPostsController(service *services.PostsService) *PostsControllers {
+	return &PostsControllers{service: service}
 }
 
-func readRoleId(r *http.Request) (int, error) {
+func readPostId(r *http.Request) (int, error) {
 	return strconv.Atoi(mux.Vars(r)["id"])
 }
 
-func (c *RolesControllers) Create(w http.ResponseWriter, r *http.Request) {
-	var newProduct models.Roles
+func (c *PostsControllers) Create(w http.ResponseWriter, r *http.Request) {
+	var newProduct models.Posts
 	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
 		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
 		return
 	}
 
-	rolesId, productErr := c.service.Create(newProduct)
+	productId, productErr := c.service.Create(newProduct)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return
 	}
 
-	roles, productErr := c.service.ReadById(rolesId)
+	product, productErr := c.service.ReadById(productId)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusInternalServerError, productErr.Error())
 		return
 	}
 
-	helper.WriteJSON(w, http.StatusCreated, roles)
+	helper.WriteJSON(w, http.StatusCreated, product)
 }
 
-func (c *RolesControllers) ReadAll(w http.ResponseWriter, r *http.Request) {
+func (c *PostsControllers) ReadAll(w http.ResponseWriter, r *http.Request) {
 	productList, productErr := c.service.ReadAll()
 	if productErr != nil {
 		helper.WriteError(w, http.StatusInternalServerError, productErr.Error())
@@ -55,39 +55,39 @@ func (c *RolesControllers) ReadAll(w http.ResponseWriter, r *http.Request) {
 	helper.WriteJSON(w, http.StatusOK, productList)
 }
 
-func (c *RolesControllers) ReadById(w http.ResponseWriter, r *http.Request) {
-	idRole, idRoleErr := readRoleId(r)
-	if idRoleErr != nil {
-		helper.WriteError(w, http.StatusBadRequest, "Identifiant role invalide")
+func (c *PostsControllers) ReadById(w http.ResponseWriter, r *http.Request) {
+	idPost, idPostErr := readPostId(r)
+	if idPostErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant post invalide")
 		return
 	}
 
-	product, productErr := c.service.ReadById(idRole)
+	product, productErr := c.service.ReadById(idPost)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusInternalServerError, productErr.Error())
 		return
 	}
 	if product.Id == 0 {
-		helper.WriteError(w, http.StatusNotFound, "Le role introuvable")
+		helper.WriteError(w, http.StatusNotFound, "Le post introuvable")
 		return
 	}
 
 	helper.WriteJSON(w, http.StatusOK, product)
 }
 
-func (c *RolesControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
-	idRole, idRoleErr := readRoleId(r)
-	if idRoleErr != nil {
-		helper.WriteError(w, http.StatusBadRequest, "Identifiant role invalide")
+func (c *PostsControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
+	idPost, idPostErr := readPostId(r)
+	if idPostErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant post invalide")
 		return
 	}
 
-	var product models.Roles
+	var product models.Posts
 	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
 		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
 		return
 	}
-	product.Id = idRole
+	product.Id = idPost
 
 	productErr := c.service.UpdateById(product)
 	if productErr != nil {
@@ -95,7 +95,7 @@ func (c *RolesControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedProduct, productErr := c.service.ReadById(idRole)
+	updatedProduct, productErr := c.service.ReadById(idPost)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusInternalServerError, productErr.Error())
 		return
@@ -104,20 +104,20 @@ func (c *RolesControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 	helper.WriteJSON(w, http.StatusOK, updatedProduct)
 }
 
-func (c *RolesControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
-	idRole, idRoleErr := readRoleId(r)
-	if idRoleErr != nil {
-		helper.WriteError(w, http.StatusBadRequest, "Identifiant role invalide")
+func (c *PostsControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
+	idPost, idPostErr := readPostId(r)
+	if idPostErr != nil {
+		helper.WriteError(w, http.StatusBadRequest, "Identifiant post invalide")
 		return
 	}
 
-	productErr := c.service.DeleteById(idRole)
+	productErr := c.service.DeleteById(idPost)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return
 	}
 
 	helper.WriteJSON(w, http.StatusOK, map[string]string{
-		"message": "role supprime",
+		"message": "post supprime",
 	})
 }
