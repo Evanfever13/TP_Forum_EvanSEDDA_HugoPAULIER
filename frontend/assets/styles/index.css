@@ -67,18 +67,6 @@ body {
     opacity: 1;
 }
 
-.mini-nav a:last-child {
-    padding-right: 0;
-}
-
-.mini-nav a:last-child::after {
-    display: none;
-}
-
-.mini-nav a:hover {
-    opacity: 1;
-}
-
 
 header {
     height: 105px;
@@ -159,4 +147,13 @@ header {
     padding: 10px 0;
     width: 100%;
     border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+/* Formulaire d'inscription et de connection , vive le gain de temps et flemme de faire plusieurs css*/
+
+.formulaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
 }
