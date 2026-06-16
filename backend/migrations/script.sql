@@ -5,7 +5,7 @@ USE forum;
 -- TABLE: Roles
 -- -------------------------
 CREATE TABLE Roles (
-    id_role INT AUTO_INCREMENT PRIMARY KEY,
+    id_roles INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
@@ -18,40 +18,40 @@ CREATE TABLE Users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_role INT,
-    FOREIGN KEY (id_role) REFERENCES Roles(id_role)
+    id_roles INT,
+    FOREIGN KEY (id_roles) REFERENCES Roles(id_roles)
 );
 
 -- -------------------------
 -- TABLE: Threads
 -- -------------------------
 CREATE TABLE Threads (
-    id_thread INT AUTO_INCREMENT PRIMARY KEY,
+    id_threads INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     id_users INT,
     FOREIGN KEY (id_users) REFERENCES Users(id_users)
 );
 
 -- -------------------------
--- TABLE: Post
+-- TABLE: Posts
 -- -------------------------
-CREATE TABLE Post (
-    id_post INT AUTO_INCREMENT PRIMARY KEY,
-    post TEXT NOT NULL,
+CREATE TABLE Posts (
+    id_posts INT AUTO_INCREMENT PRIMARY KEY,
+    posts TEXT NOT NULL,
     id_users INT,
-    id_thread INT,
+    id_threads INT,
     FOREIGN KEY (id_users) REFERENCES Users(id_users),
-    FOREIGN KEY (id_thread) REFERENCES Threads(id_thread)
+    FOREIGN KEY (id_threads) REFERENCES Threads(id_threads)
 );
 
 -- -------------------------
--- TABLE: Vote
+-- TABLE: Votes
 -- -------------------------
-CREATE TABLE Vote (
-    id_vote INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Votes (
+    id_votes INT AUTO_INCREMENT PRIMARY KEY,
     id_users INT,
-    id_post INT,
+    id_posts INT,
     vote INT,
     FOREIGN KEY (id_users) REFERENCES Users(id_users),
-    FOREIGN KEY (id_post) REFERENCES Post(id_post)
+    FOREIGN KEY (id_posts) REFERENCES Posts(id_posts)
 );

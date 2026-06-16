@@ -58,7 +58,7 @@ func (r *RolesRepository) ReadAll() ([]models.Roles, error) {
 
 func (r *RolesRepository) ReadById(id int) (models.Roles, error) {
 	var roles models.Roles
-	sqlErr := r.db.QueryRow("SELECT * FROM `roles` WHERE `roles`.id = ?;", id).
+	sqlErr := r.db.QueryRow("SELECT * FROM `roles` WHERE `roles`.id_roles = ?;", id).
 		Scan(&roles.Id, &roles.Name)
 
 	if sqlErr != nil {
@@ -72,7 +72,7 @@ func (r *RolesRepository) ReadById(id int) (models.Roles, error) {
 }
 
 func (r *RolesRepository) UpdateRoleById(roles models.Roles) error {
-	query := "UPDATE `roles` SET `Name`=? WHERE id=?;"
+	query := "UPDATE `roles` SET `Name`=? WHERE id_roles=?;"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		roles.Name,
@@ -91,7 +91,7 @@ func (r *RolesRepository) UpdateRoleById(roles models.Roles) error {
 }
 
 func (r *RolesRepository) DeleteRoleById(id int) error {
-	sqlResult, sqlErr := r.db.Exec("DELETE FROM `roles` WHERE id=?;", id)
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM `roles` WHERE id_roles=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression role - Erreur : \n\t %s", sqlErr.Error())
 	}

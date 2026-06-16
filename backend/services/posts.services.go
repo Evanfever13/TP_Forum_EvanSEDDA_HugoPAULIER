@@ -7,15 +7,15 @@ import (
 )
 
 type PostsService struct {
-	PostsRepository *repositories.PostRepository
+	PostsRepository *repositories.PostsRepository
 }
 
-func InitPostsService(postsRepository *repositories.PostRepository) *PostsService {
+func InitPostsService(postsRepository *repositories.PostsRepository) *PostsService {
 	return &PostsService{PostsRepository: postsRepository}
 }
 
 func (s *PostsService) Create(posts models.Posts) (int, error) {
-	if posts.Id <= 0 || posts.Name == "" {
+	if posts.Posts == "" {
 			return -1, fmt.Errorf(" Erreur ajout post - Données manquantes ou invalides")
 	}
 
@@ -37,7 +37,7 @@ func (s *PostsService) ReadAll() ([]models.Posts, error) {
 }
 
 func (s *PostsService) ReadById(idPost int) (models.Posts, error) {
-	if idPost <= 0 {
+	if idPost < 0 {
 		return models.Posts{}, fmt.Errorf(" Erreur récupération post - identifiant invalide : %d", idPost)
 	}
 
@@ -50,7 +50,7 @@ func (s *PostsService) ReadById(idPost int) (models.Posts, error) {
 }
 
 func (s *PostsService) UpdateById(posts models.Posts) error {
-	if posts.Id <= 0 || posts.Name == "" {
+	if posts.Posts == "" {
 		return fmt.Errorf(" Erreur modification post - Donnees manquantes ou invalides")
 	}
 
@@ -58,7 +58,7 @@ func (s *PostsService) UpdateById(posts models.Posts) error {
 }
 
 func (s *PostsService) DeleteById(idPost int) error {
-	if idPost <= 0 {
+	if idPost < 0 {
 		return fmt.Errorf(" Erreur suppression post - identifiant invalide : %d", idPost)
 	}
 

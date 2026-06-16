@@ -3,12 +3,13 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"YaskBackend/models"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func ValidateToken(tokenString string) (*Claims, error) {
-	claims := &Claims{}
+func ValidateToken(tokenString string) (*models.Claims, error) {
+	claims := &models.Claims{}
 	token, err := jwt.ParseWithClaims(
 		tokenString,
 		claims,

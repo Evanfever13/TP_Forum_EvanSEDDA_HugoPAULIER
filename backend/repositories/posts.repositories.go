@@ -8,20 +8,19 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type PostRepository struct {
+type PostsRepository struct {
 	db *sql.DB
 }
 
-func InitPostRepository(db *sql.DB) *PostRepository {
-	return &PostRepository{db}
+func InitPostsRepository(db *sql.DB) *PostsRepository {
+	return &PostsRepository{db}
 }
 
-func (r *PostRepository) CreatePost(post models.Posts) (int, error) {
-	query := "INSERT INTO `posts`(`title`, `content`) VALUES (?, ?);"
+func (r *PostsRepository) CreatePost(post models.Posts) (int, error) {
+	query := "INSERT INTO `posts`( `posts`, `id_users`, `id_threads`) VALUES (?, ?, ?);"
 
 	sqlResult, sqlErr := r.db.Exec(query,
-		post.Id,
-		post.Name,
+		post.Posts,
 		post.IdUsers,
 		post.IdThreads,
 	)
@@ -38,7 +37,7 @@ func (r *PostRepository) CreatePost(post models.Posts) (int, error) {
 	return int(id), nil
 }
 
-func (r *PostRepository) ReadAll() ([]models.Posts, error) {
+func (r *PostsRepository) ReadAll() ([]models.Posts, error) {
 	var listPosts []models.Posts
 	sqlResult, sqlErr := r.db.Query("SELECT * FROM `posts`;")
 	if sqlErr != nil {
@@ -49,7 +48,7 @@ func (r *PostRepository) ReadAll() ([]models.Posts, error) {
 
 	for sqlResult.Next() {
 		var post models.Posts
-		errScan := sqlResult.Scan(&post.Id, &post.Name, &post.IdUsers, &post.IdThreads)
+		errScan := sqlResult.Scan(&post.Id, &post.Posts, &post.IdUsers, &post.IdThreads)
 		if errScan != nil {
 			return nil, errScan
 		}
@@ -59,10 +58,10 @@ func (r *PostRepository) ReadAll() ([]models.Posts, error) {
 	return listPosts, nil
 }
 
-func (r *PostRepository) ReadById(id int) (models.Posts, error) {
+func (r *PostsRepository) ReadById(id int) (models.Posts, error) {
 	var post models.Posts
-	sqlErr := r.db.QueryRow("SELECT * FROM `posts` WHERE `posts`.id = ?;", id).
-		Scan(&post.Id, &post.Name, &post.IdUsers, &post.IdThreads)
+	sqlErr := r.db.QueryRow("SELECT * FROM `posts` WHERE `posts`.id_posts = ?;", id).
+		Scan(&post.Id, &post.Posts, &post.IdUsers, &post.IdThreads)
 
 	if sqlErr != nil {
 		if sqlErr == sql.ErrNoRows {
@@ -74,11 +73,11 @@ func (r *PostRepository) ReadById(id int) (models.Posts, error) {
 	return post, nil
 }
 
-func (r *PostRepository) UpdatePostById(post models.Posts) error {
-	query := "UPDATE `posts` SET `Name`=?, `IdUsers`=?, `IdThreads`=? WHERE id=?;"
+func (r *PostsRepository) UpdatePostById(post models.Posts) error {
+	query := "UPDATE `posts` SET `Posts`=?, `Id_Users`=?, `Id_Threads`=? WHERE id_posts=?;"
 
 	sqlResult, sqlErr := r.db.Exec(query,
-		post.Name,
+		post.Posts,
 		post.IdUsers,
 		post.IdThreads,
 		post.Id,
@@ -95,8 +94,8 @@ func (r *PostRepository) UpdatePostById(post models.Posts) error {
 	return nil
 }
 
-func (r *PostRepository) DeletePostById(id int) error {
-	sqlResult, sqlErr := r.db.Exec("DELETE FROM `posts` WHERE id=?;", id)
+func (r *PostsRepository) DeletePostById(id int) error {
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM `posts` WHERE id_posts=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression post - Erreur : \n\t %s", sqlErr.Error())
 	}
