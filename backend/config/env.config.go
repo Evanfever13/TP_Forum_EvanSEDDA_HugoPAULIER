@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -9,8 +8,7 @@ import (
 )
 
 func LoadEnv() {
-	err := godotenv.Load()
-	fmt.Println(err)
+	err := godotenv.Load("./.env")
 	if err != nil {
 		log.Println("Erreur (env.config.go) - Aucun fichier .env ")
 	}

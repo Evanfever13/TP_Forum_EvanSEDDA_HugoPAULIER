@@ -15,7 +15,7 @@ func InitRolesService(rolesRepository *repositories.RolesRepository) *RolesServi
 }
 
 func (s *RolesService) Create(roles models.Roles) (int, error) {
-	if roles.Id <= 0 || roles.Name == "" {
+	if roles.Name == "" {
 		return -1, fmt.Errorf(" Erreur ajout role - Données manquantes ou invalides")
 	}
 
@@ -50,7 +50,7 @@ func (s *RolesService) ReadById(idRole int) (models.Roles, error) {
 }
 
 func (s *RolesService) UpdateById(roles models.Roles) error {
-	if roles.Id <= 0 || roles.Name == "" {
+	if roles.Name == "" {
 		return fmt.Errorf(" Erreur modification role - Donnees manquantes ou invalides")
 	}
 

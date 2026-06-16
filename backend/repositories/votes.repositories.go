@@ -8,21 +8,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type VoteRepository struct {
+type VotesRepository struct {
 	db *sql.DB
 }
 
-func InitVoteRepository(db *sql.DB) *VoteRepository {
-	return &VoteRepository{db}
+func InitVotesRepository(db *sql.DB) *VotesRepository {
+	return &VotesRepository{db}
 }
 
-func (r *VoteRepository) CreateVote(vote models.Votes) (int, error) {
-	query := "INSERT INTO `votes`(`id_user`, `id_post`, `value`) VALUES (?, ?, ?);"
+func (r *VotesRepository) CreateVote(vote models.Votes) (int, error) {
+	query := "INSERT INTO `votes`(`id_users`, `id_posts`, `vote`) VALUES (?, ?, ?);"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		vote.IdUsers,
-		vote.IdPost,
-		vote.Vote,
+		vote.IdPosts,
+		vote.Votes,
 	)
 
 	if sqlErr != nil {
@@ -37,7 +37,7 @@ func (r *VoteRepository) CreateVote(vote models.Votes) (int, error) {
 	return int(id), nil
 }
 
-func (r *VoteRepository) ReadAll() ([]models.Votes, error) {
+func (r *VotesRepository) ReadAll() ([]models.Votes, error) {
 	var listVotes []models.Votes
 	sqlResult, sqlErr := r.db.Query("SELECT * FROM `votes`;")
 	if sqlErr != nil {
@@ -48,7 +48,7 @@ func (r *VoteRepository) ReadAll() ([]models.Votes, error) {
 
 	for sqlResult.Next() {
 		var vote models.Votes
-		errScan := sqlResult.Scan(&vote.IdVote, &vote.IdUsers, &vote.IdPost, &vote.Vote)
+		errScan := sqlResult.Scan(&vote.IdVote, &vote.IdUsers, &vote.IdPosts, &vote.Votes)
 		if errScan != nil {
 			return nil, errScan
 		}
@@ -58,10 +58,10 @@ func (r *VoteRepository) ReadAll() ([]models.Votes, error) {
 	return listVotes, nil
 }
 
-func (r *VoteRepository) ReadById(id int) (models.Votes, error) {
+func (r *VotesRepository) ReadById(id int) (models.Votes, error) {
 	var vote models.Votes
-	sqlErr := r.db.QueryRow("SELECT * FROM `votes` WHERE `votes`.id = ?;", id).
-		Scan(&vote.IdVote, &vote.IdUsers, &vote.IdPost, &vote.Vote)
+	sqlErr := r.db.QueryRow("SELECT * FROM `votes` WHERE `votes`.id_votes = ?;", id).
+		Scan(&vote.IdVote, &vote.IdUsers, &vote.IdPosts, &vote.Votes)
 
 	if sqlErr != nil {
 		if sqlErr == sql.ErrNoRows {
@@ -73,13 +73,13 @@ func (r *VoteRepository) ReadById(id int) (models.Votes, error) {
 	return vote, nil
 }
 
-func (r *VoteRepository) UpdateVoteById(vote models.Votes) error {
-	query := "UPDATE `votes` SET `IdUsers`=?, `IdPost`=?, `Value`=? WHERE id=?;"
+func (r *VotesRepository) UpdateVoteById(vote models.Votes) error {
+	query := "UPDATE `votes` SET `Id_Users`=?, `Id_Posts`=?, `Vote`=? WHERE id_votes=?;"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		vote.IdUsers,
-		vote.IdPost,
-		vote.Vote,
+		vote.IdPosts,
+		vote.Votes,
 		vote.IdVote,
 	)
 
@@ -94,8 +94,8 @@ func (r *VoteRepository) UpdateVoteById(vote models.Votes) error {
 	return nil
 }
 
-func (r *VoteRepository) DeleteVoteById(id int) error {
-	sqlResult, sqlErr := r.db.Exec("DELETE FROM `votes` WHERE id=?;", id)
+func (r *VotesRepository) DeleteVoteById(id int) error {
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM `votes` WHERE id_votes=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression vote - Erreur : \n\t %s", sqlErr.Error())
 	}

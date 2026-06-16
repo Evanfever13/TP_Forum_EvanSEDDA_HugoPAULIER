@@ -15,7 +15,7 @@ func InitUsersService(usersRepository *repositories.UsersRepository) *UsersServi
 }
 
 func (s *UsersService) Create(users models.Users) (int, error) {
-	if users.Id <= 0 || users.Name == "" || users.Email == "" || users.Password == "" || users.DateCreation == 0{
+	if users.Name == "" || users.Email == "" || users.Password == "" || users.DateCreation.IsZero() {
 		return -1, fmt.Errorf(" Erreur ajout utilisateur - Données manquantes ou invalides")
 	}
 
@@ -50,7 +50,7 @@ func (s *UsersService) ReadById(idUser int) (models.Users, error) {
 }
 
 func (s *UsersService) UpdateById(users models.Users) error {
-	if users.Id <= 0 || users.Name == "" || users.Email == "" || users.Password == "" || users.DateCreation == 0{
+	if users.Id <= 0 || users.Name == "" || users.Email == "" || users.Password == "" || users.DateCreation.IsZero() {
 		return fmt.Errorf(" Erreur modification utilisateur - Donnees manquantes ou invalides")
 	}
 
