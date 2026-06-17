@@ -1,0 +1,56 @@
+/* Conteneur principal */
+#rules-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Boîte centrale */
+#rules-content {
+    max-width: 800px;
+    width: 100%;
+}
+
+/* Titres */
+#rules-content h1 {
+    font-size: 1.8rem;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+/* Sous-titres */
+#rules-content h2 {
+    font-size: 1.3rem;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* Listes */
+#rules-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+#rules-content li {
+    padding: 6px 0;
+    color: #444;
+}
+
+/* Paragraphe */
+#rules-content p {
+    margin-bottom: 15px;
+    color: #444;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9rem;
+}

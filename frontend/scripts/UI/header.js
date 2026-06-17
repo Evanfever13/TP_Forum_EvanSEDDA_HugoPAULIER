@@ -68,20 +68,38 @@ async function buildHeader() {
  
     const user = await fetchCurrentUser();
  
+    const userId = localStorage.getItem("userId");
+    
+    // on essaye de récupérer l'utilisateur, mais s'il échoue, on affiche quand même le profil
+    let userName = "Profil";
+    if (user && user.name) {
+        userName = user.name;
+    }
+ 
     const logoDiv = document.createElement("div");
     logoDiv.className = "logo";
- 
+
+    // Correction : utiliser "button" au lieu de "bouton"
+    const boutonImg = document.createElement("button");
+    boutonImg.className = "boutonImg";
+
+    boutonImg.addEventListener("click", () => {
+        window.location.href = "/home";
+    });
+
     const logoImg = document.createElement("img");
     logoImg.src = "/assets/img/logo/logo.png";
     logoImg.alt = "logo";
-    logoDiv.appendChild(logoImg);
+
+    boutonImg.appendChild(logoImg);
+    logoDiv.appendChild(boutonImg);
  
     const nav = document.createElement("nav");
     const ul = document.createElement("ul");
     ul.className = "nav-links";
  
-    if (user) {
-        ul.appendChild(createNavItem(user.name, "/profil"));
+    if (userId) {
+        ul.appendChild(createNavItem(userName, "/profil"));
         ul.appendChild(createNavItem("Déconnexion", "#", null, logout));
     } else {
         ul.appendChild(createNavItem("Connexion", "/login"));
