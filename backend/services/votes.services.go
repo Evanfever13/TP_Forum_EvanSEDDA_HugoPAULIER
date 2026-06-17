@@ -7,15 +7,15 @@ import (
 )
 
 type VotesService struct {
-	VoteRepository *repositories.VoteRepository
+	VoteRepository *repositories.VotesRepository
 }
 
-func InitVotesService(voteRepository *repositories.VoteRepository) *VotesService {
+func InitVotesService(voteRepository *repositories.VotesRepository) *VotesService {
 	return &VotesService{VoteRepository: voteRepository}
 }
 
 func (s *VotesService) Create(vote models.Votes) (int, error) {
-	if vote.IdVote <= 0 || vote.Vote != 1 && vote.Vote != -1 {
+	if false /*vote.IdVote <= 0 || vote.Votes != 1 && vote.Votes != -1 */{
 		return -1, fmt.Errorf(" Erreur ajout vote - Données manquantes ou invalides")
 	}
 
@@ -50,7 +50,7 @@ func (s *VotesService) ReadById(idVote int) (models.Votes, error) {
 }
 
 func (s *VotesService) UpdateById(vote models.Votes) error {
-	if vote.IdVote <= 0 || vote.Vote != 1 && vote.Vote != -1 {
+	if false /*vote.IdVote <= 0 || vote.Votes != 1 && vote.Votes != -1 */{
 		return fmt.Errorf(" Erreur modification vote - Donnees manquantes ou invalides")
 	}
 

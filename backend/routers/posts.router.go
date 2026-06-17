@@ -1,7 +1,10 @@
 package routers
 
-import "github.com/gorilla/mux"
-import "YaskBackend/controllers"
+import (
+	"YaskBackend/controllers"
+
+	"github.com/gorilla/mux"
+)
 
 func RegisterPostsRoutes(r *mux.Router, postsController *controllers.PostsControllers) {
 	r.HandleFunc("/posts", postsController.ReadAll).Methods("GET")

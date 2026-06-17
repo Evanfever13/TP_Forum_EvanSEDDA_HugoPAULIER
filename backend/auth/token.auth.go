@@ -2,28 +2,28 @@ package auth
 
 import (
 	"YaskBackend/config"
+	"YaskBackend/models"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte(config.GetEnv("JWT_SECRET"))
+var jwtSecret []byte
 
-type Claims struct {
-	UserID string `json:"user_id"`
-	Role   string `json:"role"`
-	jwt.RegisteredClaims
+func InitSecret() {
+	jwtSecret = []byte(config.GetEnv("JWT_SECRET"))
 }
+
 func GenerateToken(userID string, role string) (string, error) {
 	now := time.Now()
-	claims := Claims{
+	claims := models.Claims{
 		UserID: userID,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:  userID,
-			Issuer:   "YaskBackend",
-			Audience: []string{"YaskFrontend"},
-			IssuedAt: jwt.NewNumericDate(now),
+			Subject:   userID,
+			Issuer:    "YaskBackend",
+			Audience:  []string{"YaskFrontend"},
+			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(15 * time.Minute)),
 		},
 	}

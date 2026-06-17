@@ -5,6 +5,7 @@ import (
 	"YaskBackend/models"
 	"YaskBackend/services"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -26,6 +27,7 @@ func readUserId(r *http.Request) (int, error) {
 func (c *UsersControllers) Create(w http.ResponseWriter, r *http.Request) {
 	var newProduct models.Users
 	if err := json.NewDecoder(r.Body).Decode(&newProduct); err != nil {
+		log.Printf("Controller (user.create): Décode data request - %v", err)
 		helper.WriteError(w, http.StatusBadRequest, "JSON invalide")
 		return
 	}

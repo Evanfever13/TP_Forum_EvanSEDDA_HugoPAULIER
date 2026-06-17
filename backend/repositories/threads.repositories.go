@@ -8,19 +8,18 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type ThreadRepository struct {
+type ThreadsRepository struct {
 	db *sql.DB
 }
 
-func InitThreadRepository(db *sql.DB) *ThreadRepository {
-	return &ThreadRepository{db}
+func InitThreadsRepository(db *sql.DB) *ThreadsRepository {
+	return &ThreadsRepository{db}
 }
 
-func (r *ThreadRepository) CreateThread(thread models.Threads) (int, error) {
-	query := "INSERT INTO `threads`(`title`, `content`) VALUES (?, ?);"
+func (r *ThreadsRepository) CreateThread(thread models.Threads) (int, error) {
+	query := "INSERT INTO `threads`(`title`, `id_users`) VALUES (?, ?);"
 
 	sqlResult, sqlErr := r.db.Exec(query,
-		thread.Id,
 		thread.Titre,
 		thread.IdUsers,
 	)
@@ -37,7 +36,7 @@ func (r *ThreadRepository) CreateThread(thread models.Threads) (int, error) {
 	return int(id), nil
 }
 
-func (r *ThreadRepository) ReadAll() ([]models.Threads, error) {
+func (r *ThreadsRepository) ReadAll() ([]models.Threads, error) {
 	var listThreads []models.Threads
 	sqlResult, sqlErr := r.db.Query("SELECT * FROM `threads`;")
 	if sqlErr != nil {
@@ -58,9 +57,9 @@ func (r *ThreadRepository) ReadAll() ([]models.Threads, error) {
 	return listThreads, nil
 }
 
-func (r *ThreadRepository) ReadById(id int) (models.Threads, error) {
+func (r *ThreadsRepository) ReadById(id int) (models.Threads, error) {
 	var thread models.Threads
-	sqlErr := r.db.QueryRow("SELECT * FROM `threads` WHERE `threads`.id = ?;", id).
+	sqlErr := r.db.QueryRow("SELECT * FROM `threads` WHERE `threads`.id_threads = ?;", id).
 		Scan(&thread.Id, &thread.Titre, &thread.IdUsers)
 
 	if sqlErr != nil {
@@ -73,8 +72,8 @@ func (r *ThreadRepository) ReadById(id int) (models.Threads, error) {
 	return thread, nil
 }
 
-func (r *ThreadRepository) UpdateThreadById(thread models.Threads) error {
-	query := "UPDATE `threads` SET `Titre`=?, `IdUsers`=? WHERE id=?;"
+func (r *ThreadsRepository) UpdateThreadById(thread models.Threads) error {
+	query := "UPDATE `threads` SET `Title`=?, `Id_Users`=? WHERE id_threads=?;"
 
 	sqlResult, sqlErr := r.db.Exec(query,		
 		thread.Titre,
@@ -87,14 +86,14 @@ func (r *ThreadRepository) UpdateThreadById(thread models.Threads) error {
 	}
 
 	if nbrRow, _ := sqlResult.RowsAffected(); nbrRow <= 0 {
-		return fmt.Errorf(" Erreur modification thread		 - Aucune ligne modifiée")
+		return fmt.Errorf(" Erreur modification thread - Aucune ligne modifiée")
 	}
 
 	return nil
 }
 
-func (r *ThreadRepository) DeleteThreadById(id int) error {
-	sqlResult, sqlErr := r.db.Exec("DELETE FROM `threads` WHERE id=?;", id)
+func (r *ThreadsRepository) DeleteThreadById(id int) error {
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM `threads` WHERE id_threads=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression thread - Erreur : \n\t %s", sqlErr.Error())
 	}

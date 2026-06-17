@@ -9,13 +9,14 @@ import (
 )
 
 func InitDB() *sql.DB {
+
 	user := GetEnv("DB_USER")
 	pwd := GetEnv("DB_PWD")
 	host := GetEnv("DB_HOST")
 	port := GetEnv("DB_PORT")
 	name := GetEnv("DB_NAME")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pwd, host, port, name)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, pwd, host, port, name)
 
 	dbContext, dbContextErr := sql.Open("mysql", dsn)
 	if dbContextErr != nil {
