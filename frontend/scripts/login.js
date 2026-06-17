@@ -8,14 +8,22 @@ function loginUser() {
         return;
     }
 
-    fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password })
+    fetch("/api/users", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Identifiants incorrects");
+    .then(async res => {
+        if (!res.ok) throw new Error("Erreur de communication avec le serveur");
+        const users = await res.json();
+        
+        const user = users.find(u => u.email === email && u.password === password);
+        
+        if (!user) {
+            throw new Error("Identifiants incorrects");
+        }
+        
+        localStorage.setItem("userId", user.id_users);
+        
         window.location.href = "/home";
     })
     .catch(err => {

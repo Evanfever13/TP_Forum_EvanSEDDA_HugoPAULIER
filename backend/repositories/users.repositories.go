@@ -63,7 +63,7 @@ func (r *UsersRepository) ReadAll() ([]models.Users, error) {
 
 func (r *UsersRepository) ReadById(id int) (models.Users, error) {
 	var users models.Users
-	sqlErr := r.db.QueryRow("SELECT * FROM `users` WHERE `users`.id = ?;", id).
+	sqlErr := r.db.QueryRow("SELECT * FROM `users` WHERE `users`.id_users = ?;", id).
 		Scan(&users.Id, &users.Name, &users.Email, &users.Password, &users.DateCreation, &users.IdRole)
 
 	if sqlErr != nil {
@@ -77,7 +77,7 @@ func (r *UsersRepository) ReadById(id int) (models.Users, error) {
 }
 
 func (r *UsersRepository) UpdateProductById(users models.Users) error {
-	query := "UPDATE `users` SET `Name`=?,`Email`=?,`Password`=?,`DateCreation`=?, `IdRole`=? WHERE id=?;"
+	query := "UPDATE `users` SET `Name`=?,`Email`=?,`Password`=?,`DateCreation`=?, `IdRole`=? WHERE id_users=?;"
 
 	sqlResult, sqlErr := r.db.Exec(query,
 		users.Name,
@@ -100,7 +100,7 @@ func (r *UsersRepository) UpdateProductById(users models.Users) error {
 }
 
 func (r UsersRepository) DeleteProductById(id int) error {
-	sqlResult, sqlErr := r.db.Exec("DELETE FROM `users` WHERE id=?;", id)
+	sqlResult, sqlErr := r.db.Exec("DELETE FROM `users` WHERE id_users=?;", id)
 	if sqlErr != nil {
 		return fmt.Errorf(" Erreur suppression utlisateur - Erreur : \n\t %s", sqlErr.Error())
 	}
