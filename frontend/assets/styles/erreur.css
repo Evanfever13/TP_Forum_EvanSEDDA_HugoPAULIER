@@ -33,4 +33,8 @@
     color: white;
     border-radius: 25px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#back-home:hover {
+    background-color: #20a197;
 }

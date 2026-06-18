@@ -1,11 +1,42 @@
-/* Fonction pour créer un utilisateur */
-function registerUser() {
+// page d'inscription
+
+// verifie les regles de securite du mot de passe
+// renvoie un texte d'erreur ou null
+function checkPasswordRules(password) {
+    if (password.length < 12) {
+        return "Le mot de passe doit contenir au moins 12 caractères.";
+    }
+
+    const hasUppercase = /[A-Z]/.test(password);
+    if (hasUppercase === false) {
+        return "Le mot de passe doit contenir au moins une majuscule.";
+    }
+
+    const hasSpecialChar = /[^a-zA-Z0-9]/.test(password);
+    if (hasSpecialChar === false) {
+        return "Le mot de passe doit contenir au moins un caractère spécial.";
+    }
+
+    return null;
+}
+
+// envoie les donnees d'inscription au serveur backend
+async function registerUser() {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
+    const errorBox = document.getElementById("signupError");
 
-    if (!name || !email || !password) {
-        alert("Veuillez remplir tous les champs.");
+    errorBox.textContent = "";
+
+    if (name === "" || email === "" || password === "") {
+        errorBox.textContent = "Merci de remplir tous les champs.";
+        return;
+    }
+
+    const passwordError = checkPasswordRules(password);
+    if (passwordError !== null) {
+        errorBox.textContent = passwordError;
         return;
     }
 
@@ -13,40 +44,46 @@ function registerUser() {
         name: name,
         email: email,
         password: password,
-        id_roles: 1,
-        date_creation: new Date().toISOString() 
+        date_creation: new Date().toISOString(),
+        id_roles: 1
     };
 
-    fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(newUser)
-    })
-    .then(async res => {
+    try {
+        const res = await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newUser)
+        });
+
         if (res.status === 201) {
             window.location.href = "/login";
             return;
         }
 
-        const json = await res.json().catch(() => null);
+        const json = await res.json().catch(function() { return null; });
 
-        if (json?.error?.includes("Duplicata")) {
-            throw new Error("Cet email est déjà utilisé.");
+        if (json && json.error && json.error.toLowerCase().indexOf("duplicata") !== -1) {
+            errorBox.textContent = "Ce nom d'utilisateur ou cet email est déjà utilisé.";
+            return;
         }
 
-        throw new Error(json?.error || "Erreur lors de la création du compte.");
-    })
-    .catch(err => {
-        alert(err.message);
-        console.error("Erreur signup :", err);
-    });
+        if (json && json.error) {
+            errorBox.textContent = json.error;
+        } else {
+            errorBox.textContent = "Erreur lors de la création du compte.";
+        }
+    } catch (error) {
+        console.error("erreur signup :", error);
+        errorBox.textContent = "Impossible de contacter le serveur. Réessayez plus tard.";
+    }
 }
 
-/* Afficher le formulaire d'inscription */
+// cree les elements html du formulaire d'inscription
 function showSignupForm() {
     const panel = document.getElementById("inscription");
-    if (!panel) return;
+    if (panel === null) {
+        return;
+    }
 
     panel.replaceChildren();
 
@@ -57,12 +94,12 @@ function showSignupForm() {
     form.id = "signupForm";
     form.className = "formulaire";
 
-    /* Champ Nom */
+    // champ nom d'utilisateur
     const nameGroup = document.createElement("div");
     nameGroup.className = "form-group";
 
     const nameLabel = document.createElement("label");
-    nameLabel.textContent = "Nom :";
+    nameLabel.textContent = "Nom d'utilisateur :";
     nameLabel.htmlFor = "name";
 
     const nameInput = document.createElement("input");
@@ -73,7 +110,7 @@ function showSignupForm() {
     nameGroup.appendChild(nameLabel);
     nameGroup.appendChild(nameInput);
 
-    /* Champ Email */
+    // champ email
     const emailGroup = document.createElement("div");
     emailGroup.className = "form-group";
 
@@ -89,7 +126,7 @@ function showSignupForm() {
     emailGroup.appendChild(emailLabel);
     emailGroup.appendChild(emailInput);
 
-    /* Champ Mot de passe */
+    // champ mot de passe
     const passGroup = document.createElement("div");
     passGroup.className = "form-group";
 
@@ -102,10 +139,20 @@ function showSignupForm() {
     passInput.id = "password";
     passInput.required = true;
 
+    const passHint = document.createElement("small");
+    passHint.className = "form-hint";
+    passHint.textContent = "Au moins 12 caractères, 1 majuscule et 1 caractère spécial.";
+
     passGroup.appendChild(passLabel);
     passGroup.appendChild(passInput);
+    passGroup.appendChild(passHint);
 
-    /* Bouton Submit */
+    // zone de message d'erreur
+    const errorBox = document.createElement("p");
+    errorBox.id = "signupError";
+    errorBox.className = "form-error";
+
+    // bouton de validation
     const submit = document.createElement("button");
     submit.type = "submit";
     submit.textContent = "Créer un compte";
@@ -113,15 +160,22 @@ function showSignupForm() {
     form.appendChild(nameGroup);
     form.appendChild(emailGroup);
     form.appendChild(passGroup);
+    form.appendChild(errorBox);
     form.appendChild(submit);
 
     panel.appendChild(title);
     panel.appendChild(form);
 
-    form.addEventListener("submit", e => {
+    form.addEventListener("submit", function(e) {
         e.preventDefault();
         registerUser();
     });
 }
 
-document.addEventListener("DOMContentLoaded", showSignupForm);
+document.addEventListener("DOMContentLoaded", function() {
+    if (isLoggedIn() === true) {
+        window.location.href = "/home";
+        return;
+    }
+    showSignupForm();
+});

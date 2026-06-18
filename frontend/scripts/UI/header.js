@@ -1,40 +1,24 @@
-/* fonctions utilitaires */
+// composant en-tete de l'application
 
-function getUserIdFromCookie() {
-    const cookies = document.cookie.split(";").map(c => c.trim());
-    for (const c of cookies) {
-        if (c.startsWith("userId=")) {
-            return c.split("=")[1];
-        }
-    }
-    return null;
-}
-
-function createNavItem(text, href = "#", img = null, onClick = null) {
+// cree un element du menu de navigation
+function createNavItem(text, href = "#", onClick = null) {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = href;
+    a.textContent = text;
 
-    if (onClick) {
-        a.addEventListener("click", (e) => {
+    if (onClick !== null) {
+        a.addEventListener("click", function(e) {
             e.preventDefault();
             onClick();
         });
-    }
-
-    if (img) {
-        const image = document.createElement("img");
-        image.src = img.src;
-        image.alt = img.alt ?? "";
-        a.appendChild(image);
-    } else {
-        a.textContent = text;
     }
 
     li.appendChild(a);
     return li;
 }
 
+// cree un lien simple pour le mini bandeau du haut
 function createMiniLink(text, href = "#") {
     const a = document.createElement("a");
     a.textContent = text;
@@ -42,11 +26,12 @@ function createMiniLink(text, href = "#") {
     return a;
 }
 
-/* mini header d'ynov */
-
+// construit le petit bandeau ynov en haut de page
 function buildMiniHeader() {
     const miniHeader = document.querySelector("#mini-header");
-    if (!miniHeader) return;
+    if (miniHeader === null) {
+        return;
+    }
 
     const miniNav = document.createElement("div");
     miniNav.className = "mini-nav";
@@ -58,43 +43,57 @@ function buildMiniHeader() {
     miniHeader.appendChild(miniNav);
 }
 
-/* fetch user courant */
+// construit le champ de recherche dans le menu
+function buildSearchBox() {
+    const search = document.createElement("div");
+    search.className = "search";
 
-async function fetchCurrentUser() {
-    const userId = getUserIdFromCookie();
-    if (!userId) return null;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Rechercher un thread";
+    input.id = "search-input";
 
-    try {
-        const res = await fetch(`/api/users/${userId}`, { credentials: "include" });
-        if (!res.ok) return null;
-        return await res.json().catch(() => null);
-    } catch (err) {
-        console.error("Erreur fetchCurrentUser :", err);
-        return null;
+    const params = new URLSearchParams(window.location.search);
+    input.value = params.get("q") || "";
+
+    input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            launchSearch(input.value);
+        }
+    });
+
+    search.appendChild(input);
+    return search;
+}
+
+// redirige vers l'accueil avec le parametre de recherche
+function launchSearch(query) {
+    const trimmed = query.trim();
+    let url = "/home";
+    if (trimmed !== "") {
+        url = "/home?q=" + encodeURIComponent(trimmed);
     }
+    window.location.href = url;
 }
 
-/* fonction pour se déco */
-
-function logout() {
-    document.cookie = "userId=; Max-Age=0; path=/; SameSite=Lax";
-    window.location.href = "/home";
-}
-
-/* header principal */
-
-async function buildHeader() {
+// construit l'en-tete principal de la page
+function buildHeader() {
     const header = document.querySelector("header");
-    if (!header) return;
+    if (header === null) {
+        return;
+    }
 
-    const user = await fetchCurrentUser();
+    const user = getCurrentUserInfo();
 
+    // bloc contenant le logo cliquable
     const logoDiv = document.createElement("div");
     logoDiv.className = "logo";
 
     const boutonImg = document.createElement("button");
     boutonImg.className = "boutonImg";
-    boutonImg.addEventListener("click", () => window.location.href = "/home");
+    boutonImg.addEventListener("click", function() {
+        window.location.href = "/home";
+    });
 
     const logoImg = document.createElement("img");
     logoImg.src = "/assets/img/logo/logo.png";
@@ -103,33 +102,29 @@ async function buildHeader() {
     boutonImg.appendChild(logoImg);
     logoDiv.appendChild(boutonImg);
 
+    // menu de navigation principal
     const nav = document.createElement("nav");
     const ul = document.createElement("ul");
     ul.className = "nav-links";
 
-    if (user) {
-        ul.appendChild(createNavItem(user.name ?? "Profil", "/profil"));
-        ul.appendChild(createNavItem("Déconnexion", "#", null, logout));
+    if (user !== null) {
+        ul.appendChild(createNavItem("Mon profil", "/profil"));
+        ul.appendChild(createNavItem("Déconnexion", "#", logout));
     } else {
         ul.appendChild(createNavItem("Connexion", "/login"));
         ul.appendChild(createNavItem("Inscription", "/signup"));
     }
 
-    if (window.location.href === "/home") {
-        const search = document.createElement("div");
-        search.className = "search";
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Rechercher un thread";
-        search.appendChild(input);
-        nav.appendChild(search);
+    // la recherche n'apparait que sur la page d'accueil si connecte
+    if (window.location.pathname === "/home" && user !== null) {
+        nav.appendChild(buildSearchBox());
     }
 
     nav.appendChild(ul);
     header.replaceChildren(logoDiv, nav);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
     buildMiniHeader();
     buildHeader();
 });

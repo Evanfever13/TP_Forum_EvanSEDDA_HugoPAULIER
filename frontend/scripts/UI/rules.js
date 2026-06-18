@@ -1,4 +1,4 @@
-const container = document.querySelector("#rules-content");
+/* rules.js Page des règles de la communauté et de confidentialité */
 
 const rulesData = {
     rules: [
@@ -10,43 +10,40 @@ const rulesData = {
     ],
     privacy: [
         "Nous collectons uniquement les données nécessaires au fonctionnement du site.",
-        "Les cookies servent à mémoriser vos préférences et derniers posts vus.",
+        "Les cookies servent à mémoriser vos préférences et vos derniers posts vus.",
         "Vos données ne sont jamais revendues.",
         "Vous pouvez demander la suppression de votre compte à tout moment."
     ]
 };
 
-// Création du bloc principal
-const wrapper = document.createElement("div");
-wrapper.className = "rules-box";
+function buildList(items) {
+    const ul = document.createElement("ul");
+    items.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        ul.appendChild(li);
+    });
+    return ul;
+}
 
-// Titre Règles
-const h1Rules = document.createElement("h1");
-h1Rules.textContent = "Règles de la communauté";
-wrapper.appendChild(h1Rules);
+function displayRules() {
+    const container = document.querySelector("#rules-content");
+    if (!container) return;
 
-// Liste règles
-const ulRules = document.createElement("ul");
-rulesData.rules.forEach(r => {
-    const li = document.createElement("li");
-    li.textContent = r;
-    ulRules.appendChild(li);
-});
-wrapper.appendChild(ulRules);
+    const wrapper = document.createElement("div");
+    wrapper.className = "rules-box";
 
-// Titre Confidentialité
-const h1Privacy = document.createElement("h1");
-h1Privacy.textContent = "Confidentialité";
-wrapper.appendChild(h1Privacy);
+    const h1Rules = document.createElement("h1");
+    h1Rules.textContent = "Règles de la communauté";
+    wrapper.appendChild(h1Rules);
+    wrapper.appendChild(buildList(rulesData.rules));
 
-// Liste confidentialité
-const ulPrivacy = document.createElement("ul");
-rulesData.privacy.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent = p;
-    ulPrivacy.appendChild(li);
-});
-wrapper.appendChild(ulPrivacy);
+    const h1Privacy = document.createElement("h1");
+    h1Privacy.textContent = "Confidentialité";
+    wrapper.appendChild(h1Privacy);
+    wrapper.appendChild(buildList(rulesData.privacy));
 
-// Injection finale
-container.appendChild(wrapper);
+    container.appendChild(wrapper);
+}
+
+document.addEventListener("DOMContentLoaded", displayRules);

@@ -68,7 +68,6 @@ body {
     opacity: 1;
 }
 
-
 header {
     height: 105px;
     width: 100%;
@@ -92,7 +91,6 @@ header {
     border: none;
     cursor: pointer;
 }
-
 
 .nav-links {
     list-style: none;
@@ -124,7 +122,25 @@ header {
 .nav-links li a:hover {
     opacity: 0.8;
 }
-
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.search {
+    display: flex;
+    align-items: center;
+}
+.search input {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+}
+.search input:focus {
+    border-color: #187B73;
+}
 #gauche {
     position: fixed;
     left: 0;
@@ -144,6 +160,8 @@ header {
     gap: 40px;
 
     box-shadow: 4px 0 12px rgba(0,0,0,0.25);
+    text-align: center;
+    overflow-y: auto;
 }
 
 #gauche h2 {
@@ -176,6 +194,9 @@ li {
     margin-top: 7px;
     margin-bottom: 7px;
     align-items: center;
+    text-align: center;
+    width: 100%;
+    display: block;
 
     color: #fff;
     text-decoration: none;
@@ -185,9 +206,6 @@ li {
 .copyright{
     color: #fff;
 }
-
-/* Formulaire d'inscription et de connection , vive le gain de temps et flemme de faire plusieurs css*/
-
 .formulaire {
     display: flex;
     flex-direction: column;
@@ -213,8 +231,6 @@ li {
 .thread-controls {
     text-align: right;
 }
-
-/* Pour la zone de texte au niveau du centre*/
 #center {
     position: fixed;
     right: 0;
@@ -258,7 +274,6 @@ li {
     color : white;
 }
 
-
 .thread-card{
     height: 350px;
     width: 550px;
@@ -273,6 +288,11 @@ li {
     border: 3px solid #187B73;
     cursor: pointer;
 
-
-    
 }
+
+.side-link-active {
+    font-weight: bold;
+    color: #22aa9e !important;
+    text-decoration: underline;
+}
+

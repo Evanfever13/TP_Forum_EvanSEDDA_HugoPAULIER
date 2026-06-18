@@ -52,6 +52,6 @@ CREATE TABLE Votes (
     id_users INT,
     id_posts INT,
     vote INT,
-    CONSTRAINT fk_id_user FOREIGN KEY (id_users) REFERENCES Users(id_users),
+    CONSTRAINT fk_id_user_ote FOREIGN KEY (id_users) REFERENCES Users(id_users),
     CONSTRAINT fk_id_posts FOREIGN KEY (id_posts) REFERENCES Posts(id_posts)
 );
