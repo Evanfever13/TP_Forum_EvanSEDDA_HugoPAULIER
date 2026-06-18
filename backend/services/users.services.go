@@ -49,17 +49,26 @@ func (s *UsersService) ReadById(idUser int) (models.Users, error) {
 	return users, nil
 }
 
-func (s *UsersService) UpdateById(users models.Users) error {
+func (s *UsersService) UpdateById(users models.Users, userId int, userRole string) error {
+
 	if users.Id <= 0 || users.Name == "" || users.Email == "" || users.Password == "" || users.DateCreation.IsZero() {
 		return fmt.Errorf(" Erreur modification utilisateur - Donnees manquantes ou invalides")
+	}
+
+	if users.Id != userId && userRole != "admin" {
+		return fmt.Errorf("Vous n'avez pas les droits pour modifier ce fil")
 	}
 
 	return s.UsersRepository.UpdateProductById(users)
 }
 
-func (s *UsersService) DeleteById(idUser int) error {
+func (s *UsersService) DeleteById(idUser int, userId int, userRole string) error {
 	if idUser <= 0 {
 		return fmt.Errorf(" Erreur suppression utilisateur - identifiant invalide : %d", idUser)
+	}
+
+	if idUser != userId && userRole != "admin" {
+		return fmt.Errorf("Vous n'avez pas les droits pour modifier ce fil")
 	}
 
 	return s.UsersRepository.DeleteProductById(idUser)

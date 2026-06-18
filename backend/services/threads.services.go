@@ -46,10 +46,28 @@ func (s *ThreadsService) ReadById(idThread int) (models.Threads, error) {
 	return threads, nil
 }
 
-func (s *ThreadsService) UpdateById(thread models.Threads) error {
+func (s *ThreadsService) UpdateById(idThread int, thread models.Threads, userId int, userRole string) error {
+	thread, threadErr := s.ThreadsRepository.ReadById(idThread)
+	if threadErr != nil {
+		return threadErr
+	}
+
+	if thread.IdUsers != userId && userRole != "admin" {
+		return fmt.Errorf("Vous n'avez pas les droits pour modifier ce fil")
+	}
+
 	return s.ThreadsRepository.UpdateThreadById(thread)
 }
 
-func (s *ThreadsService) DeleteById(idThread int) error {
+func (s *ThreadsService) DeleteById(idThread int, userId int, userRole string) error {
+	thread, threadErr := s.ThreadsRepository.ReadById(idThread)
+	if threadErr != nil {
+		return threadErr
+	}
+
+	if thread.IdUsers != userId && userRole != "admin" {
+		return fmt.Errorf("Vous n'avez pas les droits pour supprimer ce fil")
+	}
+
 	return s.ThreadsRepository.DeleteThreadById(idThread)
 }

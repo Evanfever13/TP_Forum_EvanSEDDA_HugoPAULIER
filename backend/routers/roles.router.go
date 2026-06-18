@@ -1,12 +1,17 @@
 package routers
 
-import "github.com/gorilla/mux"
-import "YaskBackend/controllers"
+import (
+	"YaskBackend/controllers"
+	"YaskBackend/middleware"
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
 
 func RegisterRolesRoutes(r *mux.Router, rolesController *controllers.RolesControllers) {
-	r.HandleFunc("/roles", rolesController.ReadAll).Methods("GET")
-	r.HandleFunc("/roles/{id}", rolesController.ReadById).Methods("GET")
-	r.HandleFunc("/roles", rolesController.Create).Methods("POST")
-	r.HandleFunc("/roles/{id}", rolesController.UpdateById).Methods("PUT")
-	r.HandleFunc("/roles/{id}", rolesController.DeleteById).Methods("DELETE")
+	r.Handle("/roles", middleware.AuthMiddleware(middleware.IsAdminMiddleware(http.HandlerFunc(rolesController.ReadAll)))).Methods("GET")
+	r.Handle("/roles/{id}", middleware.AuthMiddleware(middleware.IsAdminMiddleware(http.HandlerFunc(rolesController.ReadById)))).Methods("GET")
+	r.Handle("/roles", middleware.AuthMiddleware(middleware.IsAdminMiddleware(http.HandlerFunc(rolesController.Create)))).Methods("POST")
+	r.Handle("/roles/{id}", middleware.AuthMiddleware(middleware.IsAdminMiddleware(http.HandlerFunc(rolesController.UpdateById)))).Methods("PUT")
+	r.Handle("/roles/{id}", middleware.AuthMiddleware(middleware.IsAdminMiddleware(http.HandlerFunc(rolesController.DeleteById)))).Methods("DELETE")
 }
