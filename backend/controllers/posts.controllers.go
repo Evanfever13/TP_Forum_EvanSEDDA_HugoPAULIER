@@ -89,7 +89,8 @@ func (c *PostsControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 	}
 	product.Id = idPost
 
-	productErr := c.service.UpdateById(product)
+	ctx := r.Context().Value("user")
+	productErr := c.service.UpdateById(product, ctx.(int), ctx.(string))
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return
@@ -111,7 +112,8 @@ func (c *PostsControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	productErr := c.service.DeleteById(idPost)
+	ctx := r.Context().Value("user")
+	productErr := c.service.DeleteById(idPost, ctx.(int), ctx.(string))
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return

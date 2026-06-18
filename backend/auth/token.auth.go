@@ -3,6 +3,7 @@ package auth
 import (
 	"YaskBackend/config"
 	"YaskBackend/models"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -14,13 +15,13 @@ func InitSecret() {
 	jwtSecret = []byte(config.GetEnv("JWT_SECRET"))
 }
 
-func GenerateToken(userID string, role string) (string, error) {
+func GenerateToken(userID int, role string) (string, error) {
 	now := time.Now()
 	claims := models.Claims{
 		UserID: userID,
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   userID,
+			Subject:   strconv.Itoa(userID),
 			Issuer:    "YaskBackend",
 			Audience:  []string{"YaskFrontend"},
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -28,6 +29,5 @@ func GenerateToken(userID string, role string) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
 	return token.SignedString(jwtSecret)
 }
