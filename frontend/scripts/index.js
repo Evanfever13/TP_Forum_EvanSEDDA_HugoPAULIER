@@ -1,4 +1,4 @@
-/* création et gestion des cookies*/
+/* création et gestion des cookies */
 
 function setCookie(name, value, days = 7) {
     const expires = new Date(Date.now() + days * 864e5).toUTCString();
@@ -13,7 +13,7 @@ function getCookie(name) {
 }
 
 
-/* recherche api pour retrouver les users*/
+/* recherche api pour retrouver les users */
 
 async function fetchUser(userId) {
     try {
@@ -27,32 +27,28 @@ async function fetchUser(userId) {
 }
 
 
-/* recherche api pour trouver les threads ou 1 thread*/
+/* recherche api pour trouver les threads */
 
 async function fetchThreads() {
     try {
-        const response = await fetch("/api/threads");
-        if (!response.ok) return { error: true, data: [] };
-        return { error: false, data: await response.json() };
+        const res = await fetch("/api/threads", { credentials: "include" });
+        const json = await res.json().catch(() => null);
+
+        if (!res.ok || !json) return [];
+
+        if (Array.isArray(json)) return json;
+        if (Array.isArray(json.data)) return json.data;
+        if (Array.isArray(json.threads)) return json.threads;
+
+        return [];
     } catch (error) {
         console.error("Erreur API threads :", error);
-        return { error: true, data: [] };
-    }
-}
-
-async function fetchThread(id) {
-    try {
-        const response = await fetch(`/api/threads/${id}`);
-        if (!response.ok) return { error: true, data: null };
-        return { error: false, data: await response.json() };
-    } catch (error) {
-        console.error("Erreur API thread :", error);
-        return { error: true, data: null };
+        return [];
     }
 }
 
 
-/*catégorie a revoir, c'est du static pour l'instant*/
+/* catégories (static) */
 
 async function fetchCategories() {
     return [
@@ -63,7 +59,7 @@ async function fetchCategories() {
 }
 
 
-/* fonction qui sauvegarde les dernières post vu par l'user et le stocke dans le cookie*/
+/* sauvegarde des derniers posts vus */
 
 function saveRecentThread(thread) {
     let recent = [];
@@ -77,21 +73,23 @@ function saveRecentThread(thread) {
         }
     }
 
-    recent = recent.filter(t => t.id !== thread.id);
-    recent.unshift({ id: thread.id, title: thread.title });
+    recent = recent.filter(t => t.id !== thread.id_threads);
+    recent.unshift({ id: thread.id_threads, title: thread.titre });
     recent = recent.slice(0, 10);
 
     setCookie("recentThreads", JSON.stringify(recent));
 }
 
 
-/* la sidebar de gauche dynamique*/
+/* sidebar dynamique */
 
 async function buildSidebar() {
     const gauche = document.querySelector("#gauche");
+    if (!gauche) return;
+
     gauche.innerHTML = "";
 
-    /*  catégories  */
+    /* catégories */
     const titleCat = document.createElement("h2");
     titleCat.textContent = "Catégories";
     gauche.appendChild(titleCat);
@@ -112,8 +110,7 @@ async function buildSidebar() {
 
     gauche.appendChild(ulCat);
 
-
-    /*  derniers posts vus  */
+    /* derniers posts vus */
     const titleRecent = document.createElement("h2");
     titleRecent.textContent = "Derniers posts vus";
     gauche.appendChild(titleRecent);
@@ -150,8 +147,7 @@ async function buildSidebar() {
 
     gauche.appendChild(ulRecent);
 
-
-    /*  règles et confidentialité  */
+    /* règles */
     const titleRules = document.createElement("h2");
     titleRules.textContent = "Règles et Confidentialité";
     gauche.appendChild(titleRules);
@@ -165,8 +161,7 @@ async function buildSidebar() {
 
     gauche.appendChild(rulesLink);
 
-
-    /* copyright  */
+    /* copyright */
     const copy = document.createElement("p");
     copy.className = "copyright";
     copy.textContent = "© 2026 Yask. Tous droits réservés.";
@@ -176,59 +171,64 @@ async function buildSidebar() {
 buildSidebar();
 
 
-/* fonction qui permet d'afficher tout les threads*/
+/* titre du thread */
+
+function getThreadTitle(thread) {
+    return (thread.titre || "Thread sans titre");
+}
+
+
+/* affichage des threads */
 
 async function displayThreads() {
     const container = document.querySelector("#threads");
     if (!container) return;
 
-    const result = await fetchThreads();
     container.innerHTML = "";
 
-    if (result.error) {
-        const box = document.createElement("div");
-        box.className = "boxbox";
-        const texte = document.createElement("h2");
-        texte.textContent = "Le serveur a des problèmes 😅";
-        box.appendChild(texte);
-        container.appendChild(box);
-        return;
-    }
-
-    const threads = result.data;
+    const threads = await fetchThreads();
 
     if (threads.length === 0) {
         const box = document.createElement("div");
         box.className = "boxbox";
-        const texte = document.createElement("h2");
-        texte.textContent = "Écrivez le tout premier thread !";
-        box.appendChild(texte);
+        const h2 = document.createElement("h2");
+        h2.textContent = "Aucun thread pour le moment";
+        box.appendChild(h2);
         container.appendChild(box);
         return;
     }
 
-    threads.forEach(thread => {
+    threads.forEach(t => {
         const div = document.createElement("div");
         div.className = "thread-card";
 
+        const id = t.id_threads;
+
+        div.id = "thread-" + id;
+
+        div.addEventListener("click", () => {
+            saveRecentThread(t);
+            window.location.href = "/thread/" + id;
+        });
+
         const h2 = document.createElement("h2");
-        h2.textContent = thread.title;
+        h2.textContent = getThreadTitle(t);
 
         div.appendChild(h2);
         container.appendChild(div);
     });
 }
 
-displayThreads();
+document.addEventListener("DOMContentLoaded", displayThreads);
 
 
-/* bouton ajout de thread*/
+/* bouton ajout de thread */
 
 const addThreadBtn = document.getElementById("add-thread-btn");
 
 if (addThreadBtn) {
     addThreadBtn.addEventListener("click", () => {
-        const userId = localStorage.getItem("userId");
+        const userId = cookieStore.get("userId");
         if (!userId) {
             alert("Vous devez être connecté pour ajouter un thread.");
             window.location.href = "/login";

@@ -31,6 +31,7 @@ const signupRoutes = require('./scripts/routes/signup.routes');
 const submitRoutes = require('./scripts/routes/submit.routes');
 const rulesRoutes = require('./scripts/routes/rules.routes');
 const profilRoutes = require('./scripts/routes/profil.routes');
+const threadsRoutes = require('./scripts/routes/threads.routes');
 
 app.use(homeRoutes);
 app.use(errorRoutes);
@@ -39,6 +40,7 @@ app.use(signupRoutes);
 app.use(submitRoutes);
 app.use(rulesRoutes);
 app.use(profilRoutes);
+app.use(threadsRoutes);
 
 // redirect /
 app.get('/', (req, res) => {

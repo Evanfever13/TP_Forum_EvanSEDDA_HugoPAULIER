@@ -8,29 +8,25 @@ function loginUser() {
         return;
     }
 
-    fetch("/api/users", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    })
-    .then(async res => {
-        if (!res.ok) throw new Error("Erreur de communication avec le serveur");
-        const users = await res.json();
-        
-        const user = users.find(u => u.email === email && u.password === password);
-        
-        if (!user) {
-            throw new Error("Identifiants incorrects");
-        }
-        
-        localStorage.setItem("userId", user.id_users);
-        
-        window.location.href = "/home";
-    })
-    .catch(err => {
-        alert("Erreur de connexion : " + err.message);
-        console.error("Erreur login :", err);
-    });
+    fetch("/api/users")
+        .then(res => res.json())
+        .then(users => {
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (!user) {
+                alert("Identifiants incorrects");
+                return;
+            }
+
+            document.cookie = "userId=; Max-Age=0; path=/; SameSite=Lax";
+
+            document.cookie = `userId=${user.id_users}; path=/; SameSite=Lax`;
+
+            window.location.href = "/home";
+        })
+        .catch(err => console.error("Erreur login :", err));
 }
+
 
 /* afficher le formulaire de connexion */
 function showLoginForm() {

@@ -49,7 +49,7 @@ buildFormularThread();
 /* fonction qui envoie les données */
 async function submitThread() {
     const title = document.getElementById("threadTitle").value.trim();
-    const userId = localStorage.getItem("userId");
+    const userId = getUserIdFromCookie();
 
     if (!title || !userId) {
         alert("Veuillez remplir tous les champs");
@@ -61,8 +61,8 @@ async function submitThread() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                title: title,
-                id_users: userId
+                titre: title,
+                id_users: Number(userId)
             })
         });
 
@@ -77,6 +77,5 @@ async function submitThread() {
 
     } catch (err) {
         alert("Erreur : " + err.message);
-        console.error("Erreur submitThread :", err);
     }
 }
