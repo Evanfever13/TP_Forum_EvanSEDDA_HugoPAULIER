@@ -1,12 +1,17 @@
 package routers
 
-import "github.com/gorilla/mux"
-import "YaskBackend/controllers"
+import (
+	"YaskBackend/controllers"
+	"YaskBackend/middleware"
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
 
 func RegisterVotesRoutes(r *mux.Router, voteController *controllers.VotesControllers) {
 	r.HandleFunc("/votes", voteController.ReadAll).Methods("GET")
 	r.HandleFunc("/votes/{id}", voteController.ReadById).Methods("GET")
-	r.HandleFunc("/votes", voteController.Create).Methods("POST")
-	r.HandleFunc("/votes/{id}", voteController.UpdateById).Methods("PUT")
-	r.HandleFunc("/votes/{id}", voteController.DeleteById).Methods("DELETE")
+	r.Handle("/votes", middleware.AuthMiddleware(http.HandlerFunc(voteController.Create))).Methods("POST")
+	r.Handle("/votes/{id}", middleware.AuthMiddleware(http.HandlerFunc(voteController.UpdateById))).Methods("PUT")
+	r.Handle("/votes/{id}", middleware.AuthMiddleware(http.HandlerFunc(voteController.DeleteById))).Methods("DELETE")
 }

@@ -36,12 +36,14 @@ func InitApp() *App {
 	votesService := services.InitVotesService(votesRepository)
 	threadsService := services.InitThreadsService(threadsRepository)
 	rolesService := services.InitRolesService(rolesRepository)
+	authService := services.InitAuthService(usersRepository)
 
 	usersController := controllers.InitUsersController(usersService)
 	postsController := controllers.InitPostsController(postsService)
 	votesController := controllers.InitVotesController(votesService)
 	threadsController := controllers.InitThreadsController(threadsService)
 	rolesController := controllers.InitRolesController(rolesService)
+	authController := controllers.AuthProductController(authService)
 
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
@@ -50,6 +52,7 @@ func InitApp() *App {
 	routers.RegisterVotesRoutes(router, votesController)
 	routers.RegisterThreadsRoutes(router, threadsController)
 	routers.RegisterRolesRoutes(router, rolesController)
+	routers.AuthProductRoutes(router, authController)
 
 	return &App{Db: db, Router: router}
 }

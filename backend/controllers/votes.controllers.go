@@ -89,7 +89,8 @@ func (c *VotesControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 	}
 	vote.IdVote = idVote
 
-	voteErr := c.service.UpdateById(vote)
+	ctx := r.Context().Value("user")
+	voteErr := c.service.UpdateById(vote, ctx.(int), ctx.(string))
 	if voteErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, voteErr.Error())
 		return
@@ -111,7 +112,8 @@ func (c *VotesControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	voteErr := c.service.DeleteById(idVote)
+	ctx := r.Context().Value("user")
+	voteErr := c.service.DeleteById(idVote, ctx.(int), ctx.(string))
 	if voteErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, voteErr.Error())
 		return

@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"context"
 	"YaskBackend/auth"
 	"YaskBackend/helper"
+	"context"
 	"net/http"
 	"strings"
 )
@@ -28,7 +28,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			helper.WriteError(w, http.StatusUnauthorized, "invalid token")
 			return
 		}
-		
+
 		ctx := context.WithValue(r.Context(), "user", claims)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
