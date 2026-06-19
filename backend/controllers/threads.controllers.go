@@ -5,6 +5,7 @@ import (
 	"YaskBackend/models"
 	"YaskBackend/services"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -76,6 +77,12 @@ func (c *ThreadsControllers) ReadById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *ThreadsControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("test")
+	ctx := r.Context().Value("user")
+	if ctx == nil {
+		helper.WriteError(w, http.StatusUnauthorized, "Utilisateur non authentifié")
+		return
+	}
 	idThread, idThreadErr := readThreadId(r)
 	if idThreadErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, "Identifiant thread invalide")
@@ -89,7 +96,7 @@ func (c *ThreadsControllers) UpdateById(w http.ResponseWriter, r *http.Request) 
 	}
 	thread.Id = idThread
 
-	threadErr := c.service.UpdateById(thread)
+	threadErr := c.service.UpdateById(idThread, thread, ctx.(*models.Claims).UserID, ctx.(*models.Claims).Role)
 	if threadErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, threadErr.Error())
 		return
@@ -105,13 +112,18 @@ func (c *ThreadsControllers) UpdateById(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *ThreadsControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context().Value("user")
+	if ctx == nil {
+		helper.WriteError(w, http.StatusUnauthorized, "Utilisateur non authentifié")
+		return
+	}
 	idThread, idThreadErr := readThreadId(r)
 	if idThreadErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, "Identifiant thread invalide")
 		return
 	}
 
-	threadErr := c.service.DeleteById(idThread)
+	threadErr := c.service.DeleteById(idThread, ctx.(*models.Claims).UserID, ctx.(*models.Claims).Role)
 	if threadErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, threadErr.Error())
 		return

@@ -6,6 +6,7 @@ import (
 	"YaskBackend/models"
 	"YaskBackend/services"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -30,7 +31,6 @@ func (c *AuthControllers) Login(w http.ResponseWriter, r *http.Request) {
 		helper.WriteError(w, http.StatusBadRequest, "Identifiants invalides")
 		return
 	}
-
 	helper.WriteJSON(w, http.StatusOK, response)
 }
 
@@ -42,7 +42,13 @@ func (c *AuthControllers) Me(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message := "Hello user " + claims.UserID + " with role " + claims.Role
+	user, err := c.service.Get(claims.UserID)
+	if err != nil {
+		helper.WriteError(w, http.StatusNotFound, "User not found")
+		return
+	}
+
+	message := fmt.Sprintf("Bonjour %s, vous êtes connecté en tant que %v", user.Name, user.IdRole)
 
 	helper.WriteJSON(w, http.StatusOK, dto.ResponseDto{
 		Code:    http.StatusOK,

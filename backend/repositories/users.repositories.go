@@ -112,3 +112,13 @@ func (r UsersRepository) DeleteProductById(id int) error {
 
 	return nil
 }
+
+func (r *UsersRepository) ReadByUsername(username string) (models.Users, error) {
+	var user models.Users
+	sqlErr := r.db.QueryRow("SELECT id_users, name, email, password, date_creation, id_roles FROM `users` WHERE name = ?;", username).
+		Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.DateCreation, &user.IdRole)
+	if sqlErr != nil {
+		return models.Users{}, fmt.Errorf(" Erreur récupération utilisateur - Erreur : \n\t %s", sqlErr.Error())
+	}
+	return user, nil
+}

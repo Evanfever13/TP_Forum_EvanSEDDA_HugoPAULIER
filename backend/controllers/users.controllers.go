@@ -78,6 +78,7 @@ func (c *UsersControllers) ReadById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *UsersControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context().Value("user").(*models.Claims)
 	idUser, idUserErr := readUserId(r)
 	if idUserErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, "Identifiant utlisateur invalide")
@@ -91,7 +92,7 @@ func (c *UsersControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 	}
 	product.Id = idUser
 
-	productErr := c.service.UpdateById(product)
+	productErr := c.service.UpdateById(product, ctx.UserID, ctx.Role)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return
@@ -107,13 +108,14 @@ func (c *UsersControllers) UpdateById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *UsersControllers) DeleteById(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context().Value("user").(*models.Claims)
 	idUser, idUserErr := readUserId(r)
 	if idUserErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, "Identifiant utlisateur invalide")
 		return
 	}
 
-	productErr := c.service.DeleteById(idUser)
+	productErr := c.service.DeleteById(idUser, ctx.UserID, ctx.Role)
 	if productErr != nil {
 		helper.WriteError(w, http.StatusBadRequest, productErr.Error())
 		return

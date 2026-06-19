@@ -1,0 +1,99 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, sans-serif;
+    background: #ececec;        
+    color: #222;
+}
+
+#submit {
+    width: 100%;
+    max-width: 650px;
+    margin: 40px auto;          
+    text-align: center;
+}
+
+#submit h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.formulaire {
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    text-align: left;
+    color: #333;
+}
+
+.form-group input {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 14px;
+    font-size: 1.1rem;
+    height: 50px;
+    color: #222;
+    width: 100%;
+}
+
+.form-group input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76,175,80,0.2);
+}
+
+button[type="submit"] {
+    background: #187B73;;  
+    color: #fff;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    width: 60%;
+    margin: 0 auto;
+    transition: background 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background: #20a197;
+}
+
+.form-group select {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 14px;
+    font-size: 1.1rem;
+    height: 50px;
+    color: #222;
+    width: 100%;
+}
+
+.form-group textarea {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 14px;
+    font-size: 1.1rem;
+    color: #222;
+    width: 100%;
+    height: 100px;
+}

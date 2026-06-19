@@ -1,0 +1,139 @@
+section#connection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+    min-height: calc(100vh - 120px);
+}
+
+section#connection h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+}
+
+.formulaire {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e3e3e3;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+button[type="submit"] {
+    margin-top: 10px;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background: #187B73;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background: #23afa4;
+}
+
+section#inscription {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+    min-height: calc(100vh - 120px); 
+}
+
+section#inscription h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+}
+
+#signupForm {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #e3e3e3;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #187B73;
+    outline: none;
+}
+
+#signupForm button[type="submit"] {
+    margin-top: 10px;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background: #28a745;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#signupForm button[type="submit"]:hover {
+    background: #1f8a39;
+}

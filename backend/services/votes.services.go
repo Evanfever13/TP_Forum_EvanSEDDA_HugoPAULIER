@@ -49,7 +49,7 @@ func (s *VotesService) ReadById(idVote int) (models.Votes, error) {
 	return vote, nil
 }
 
-func (s *VotesService) UpdateById(vote models.Votes) error {
+func (s *VotesService) UpdateById(vote models.Votes, userId int, userRole string) error {
 	if false /*vote.IdVote <= 0 || vote.Votes != 1 && vote.Votes != -1 */{
 		return fmt.Errorf(" Erreur modification vote - Donnees manquantes ou invalides")
 	}
@@ -57,9 +57,18 @@ func (s *VotesService) UpdateById(vote models.Votes) error {
 	return s.VoteRepository.UpdateVoteById(vote)
 }
 
-func (s *VotesService) DeleteById(idVote int) error {
+func (s *VotesService) DeleteById(idVote int, userId int, userRole string) error {
+	vote, voteErr := s.VoteRepository.ReadById(idVote)
+	if voteErr != nil {
+		return voteErr
+	}
+
 	if idVote <= 0 {
 		return fmt.Errorf(" Erreur suppression vote - identifiant invalide : %d", idVote)
+	}
+
+	if vote.IdUsers != userId && userRole != "admin" {
+		return fmt.Errorf("Vous n'avez pas les droits pour modifier ce fil")
 	}
 
 	return s.VoteRepository.DeleteVoteById(idVote)

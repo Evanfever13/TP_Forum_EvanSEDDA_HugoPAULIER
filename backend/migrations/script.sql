@@ -19,7 +19,7 @@ CREATE TABLE Users (
     password VARCHAR(255) NOT NULL,
     date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_roles INT,
-    FOREIGN KEY (id_roles) REFERENCES Roles(id_roles)
+    CONSTRAINT fk_id_post FOREIGN KEY (id_roles) REFERENCES Roles(id_roles)
 );
 
 -- -------------------------
@@ -29,7 +29,7 @@ CREATE TABLE Threads (
     id_threads INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     id_users INT,
-    FOREIGN KEY (id_users) REFERENCES Users(id_users)
+    CONSTRAINT fk_id_user FOREIGN KEY (id_users) REFERENCES Users(id_users)
 );
 
 -- -------------------------
@@ -40,8 +40,8 @@ CREATE TABLE Posts (
     posts TEXT NOT NULL,
     id_users INT,
     id_threads INT,
-    FOREIGN KEY (id_users) REFERENCES Users(id_users),
-    FOREIGN KEY (id_threads) REFERENCES Threads(id_threads)
+    CONSTRAINT fk_id_user FOREIGN KEY (id_users) REFERENCES Users(id_users),
+    CONSTRAINT fk_id_threads FOREIGN KEY (id_threads) REFERENCES Threads(id_threads)
 );
 
 -- -------------------------
@@ -52,6 +52,6 @@ CREATE TABLE Votes (
     id_users INT,
     id_posts INT,
     vote INT,
-    FOREIGN KEY (id_users) REFERENCES Users(id_users),
-    FOREIGN KEY (id_posts) REFERENCES Posts(id_posts)
+    CONSTRAINT fk_id_user_ote FOREIGN KEY (id_users) REFERENCES Users(id_users),
+    CONSTRAINT fk_id_posts FOREIGN KEY (id_posts) REFERENCES Posts(id_posts)
 );
