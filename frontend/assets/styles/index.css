@@ -296,3 +296,9 @@ li {
     text-decoration: underline;
 }
 
+#pagination.pagination{
+    display: flex;
+    margin-top: 200px;
+    justify-content: center;
+    bottom: 0;
+}

@@ -171,20 +171,20 @@ async function fetchAllVotes() {
     }
 }
 
-// calcule le score d'un message avec la liste des votes
+// calcule le score d'un message avec la liste des votes (votes = -1, 0, 1)
 function computeScore(postId, votes) {
     let total = 0;
     for (let i = 0; i < votes.length; i++) {
         if (votes[i].id_posts === postId) {
-            if (votes[i].vote === true || votes[i].vote === 1) {
-                total = total + 1;
-            } else {
-                total = total - 1;
-            }
+            if (votes[i].vote === true) total += 1;
+            else total -= 1;
         }
     }
     return total;
 }
+
+
+
 
 // cherche le vote d'un utilisateur sur un message
 function findUserVote(postId, userId, votes) {
@@ -236,33 +236,39 @@ async function votePost(postId, likeValue, votesCache) {
                 body: JSON.stringify({
                     id_users: user.id,
                     id_posts: postId,
-                    vote: likeValue
+                    vote: likeValue   
                 })
             });
             return res.ok;
         }
 
-        if (existingVote.vote === likeValue) {
+        // Même vote → suppression
+        if (existingVote.vote === likeValue) {  
             const res = await authFetch("/api/votes/" + existingVote.id_votes, {
                 method: "DELETE"
             });
             return res.ok;
         }
 
+        // Vote différent → mise à jour
         const res = await authFetch("/api/votes/" + existingVote.id_votes, {
             method: "PUT",
             body: JSON.stringify({
                 id_users: user.id,
                 id_posts: postId,
-                vote: likeValue
+                vote: likeValue   
             })
         });
         return res.ok;
+
     } catch (error) {
         console.error("erreur de vote :", error);
         return false;
     }
 }
+
+
+
 
 const postsView = {
     sortMode: "recent",
@@ -578,8 +584,7 @@ async function renderPostsList() {
         return;
     }
 
-    // reinitialise la zone sauf le formulaire
-    const oldForm = document.getElementById("commentForm");
+    // reinitialise la zone
     container.textContent = "";
 
     const title = document.createElement("h2");
